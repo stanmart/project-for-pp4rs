@@ -1,13 +1,12 @@
 import argparse
 import pandas as pd
-import colorcet as cc
 import datashader as ds
 import datashader.transfer_functions as tf
 from datashader.utils import export_image
 
 
 def create_plot(data, out, width):
-    """Creates a figure of the ZVV transit network without any grouping.
+    """Creates a figure of the ZVV transit network using ZVV's color scheme.
 
     Args:
         data: a csv file containing data usable for line plots
@@ -30,11 +29,17 @@ def create_plot(data, out, width):
         x_range=x_range,
         y_range=y_range
     )
-    agg = cvs.line(
-        plot_data, 'shape_pt_lon', 'shape_pt_lat',
-        agg=ds.sum('times_taken')
-    )
-    image = tf.shade(agg, cmap=cc.fire, how='eq_hist')
+
+    layers = []
+    for color, data_part in plot_data.groupby('route_color'):
+        agg = cvs.line(
+            data_part, 'shape_pt_lon', 'shape_pt_lat',
+            agg=ds.sum('times_taken')
+        )
+        image_part = tf.shade(agg, cmap=['#000000', '#' + color], how='eq_hist')
+        layers.append(image_part)
+
+    image = tf.stack(*layers, how='add')
 
     if out.endswith('.png'):
         out = out[:-4]
