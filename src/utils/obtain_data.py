@@ -52,12 +52,14 @@ def main():
     parser.add_argument(
         '-u', '--url',
         help="The URL to the GTFS file",
-        type=str
+        type=str,
+        required=True
     )
     parser.add_argument(
         '-o', '--out-dir',
         help="The diractory where the GTFS file is extracted",
-        type=str
+        type=str,
+        required=True
     )
 
     args = parser.parse_args()
