@@ -15,7 +15,14 @@ def download_file(url, file):
     Returns:
         None
     """
-    ...
+
+    with requests.get(url, stream=True) as req:
+        req.raise_for_status()
+        for chunk in req.iter_content(chunk_size=8192):
+            if chunk:  # filter out keep-alive new chunks
+                file.write(chunk)
+
+    print(f"Succesfully downloaded file from {url}")
 
 
 def extract_file(file, out_dir):
