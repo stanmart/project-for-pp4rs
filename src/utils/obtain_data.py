@@ -1,4 +1,5 @@
 import os
+import shutil
 import requests
 import argparse
 import zipfile
@@ -19,9 +20,7 @@ def download_file(url, file):
 
     with requests.get(url, stream=True) as req:
         req.raise_for_status()
-        for chunk in req.iter_content(chunk_size=8192):
-            if chunk:  # filter out keep-alive new chunks
-                file.write(chunk)
+        shutil.copyfileobj(req.raw, file)
 
     print(f"Succesfully downloaded file from {url}")
 
