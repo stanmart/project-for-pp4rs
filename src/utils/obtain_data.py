@@ -36,7 +36,7 @@ def extract_file(file, out_dir):
     """
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
-    elif not os.path.isdir():
+    elif not os.path.isdir(out_dir):
         raise NotADirectoryError("The object at out_dir exists but is not a directory")
 
     with zipfile.ZipFile(file) as temp_zip:
@@ -64,9 +64,9 @@ def main():
 
     args = parser.parse_args()
 
-    with tempfile.TemporaryFile('wb') as file:
-        download_file(args.u, file)
-        extract_file(file, args.o)
+    with tempfile.TemporaryFile('w+b') as file:
+        download_file(args.url, file)
+        extract_file(file, args.out_dir)
 
 
 if __name__ == "__main__":
