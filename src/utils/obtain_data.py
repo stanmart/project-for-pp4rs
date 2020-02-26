@@ -32,6 +32,9 @@ def extract_file(file, out_dir):
         file: an open file object in binary mode
         out_dir: a path to the directory where the file will be extracted. Will
             be created if it does not exist.
+
+    Returns:
+        None
     """
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)

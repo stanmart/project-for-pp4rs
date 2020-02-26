@@ -4,6 +4,43 @@ import datetime
 import pandas as pd
 
 
+def collect_shape_data(data_dir):
+    """Calculate the number of times a shape (line on a map) is travelled.
+    Appends some additional information about the route that the shape belongs to.
+
+    Args:
+        data_dir: the directory where the GTFS file is extracted
+
+    Returns:
+        pandas.DataFrame: contains shape data
+    """
+
+    data_dir = pathlib2.Path(data_dir)
+
+    service_days = calculate_service_days(data_dir)
+    trips = pd.read_csv(data_dir / 'trips.txt', index_col=2)
+    routes = pd.read_csv(data_dir / 'routes.txt', index_col=0)
+
+    route_id_diffs = trips \
+        .groupby('shape_id') \
+        .aggregate({'route_id': [min, max]})
+    if any(route_id_diffs[('route_id', 'min')] != route_id_diffs[('route_id', 'max')]):
+        raise ValueError("Shape ids must uniquely identify route_ids")
+
+    route_info = trips \
+        .join(service_days, on="service_id", how="left") \
+        .groupby(["shape_id"]) \
+        .aggregate({'days': sum, 'route_id': 'first'}) \
+        .rename(columns={'days': 'times_taken'}) \
+        .join(
+            routes[['route_short_name', 'route_type', 'route_color']],
+            on="route_id", how="left"
+        ) \
+        .reset_index()
+
+    return route_info
+
+
 def calculate_service_days(data_dir):
     """Calculate the number of active days for each service.
 
@@ -39,6 +76,9 @@ def calculate_service_days(data_dir):
         .join(irregular_number_of_days[["day_diff"]], how="outer") \
         .fillna(value=0) \
         .assign(days=lambda df: df.regular_days + df.day_diff)
+
+    if number_of_days.days.min() < 0:
+        raise ValueError("Number of days a service operates on cannot be negative.")
 
     return number_of_days
 
@@ -93,7 +133,7 @@ def main():
     if not args.out_dir:
         args.out_dir = args.data_dir
 
-    service_days = calculate_service_days(args.data_dir)
+    shape_data = collect_shape_data(args.data_dir)
 
 
 if __name__ == "__main__":
