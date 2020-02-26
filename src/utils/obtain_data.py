@@ -1,3 +1,4 @@
+import os
 import requests
 import argparse
 import zipfile
@@ -33,7 +34,15 @@ def extract_file(file, out_dir):
         out_dir: a path to the directory where the file will be extracted. Will
             be created if it does not exist.
     """
-    ...
+    if not os.path.exists(out_dir):
+        os.makedirs(out_dir)
+    elif not os.path.isdir():
+        raise NotADirectoryError("The object at out_dir exists but is not a directory")
+
+    with zipfile.ZipFile(file) as temp_zip:
+        temp_zip.extractall(out_dir)
+
+    print(f"Contents unpacked succesfully to {out_dir}")
 
 
 def main():
