@@ -1,25 +1,27 @@
+import os
 import pathlib2
 import argparse
 import datetime
+import numpy as np
 import pandas as pd
 
 
-def collect_shape_data(data_dir):
+def collect_shape_data(gtfs_dir):
     """Calculate the number of times a shape (line on a map) is travelled.
     Appends some additional information about the route that the shape belongs to.
 
     Args:
-        data_dir: the directory where the GTFS file is extracted
+        gtfs_dir: the directory where the GTFS file is extracted
 
     Returns:
         pandas.DataFrame: contains shape data
     """
 
-    data_dir = pathlib2.Path(data_dir)
+    gtfs_dir = pathlib2.Path(gtfs_dir)
 
-    service_days = calculate_service_days(data_dir)
-    trips = pd.read_csv(data_dir / 'trips.txt', index_col=2)
-    routes = pd.read_csv(data_dir / 'routes.txt', index_col=0)
+    service_days = calculate_service_days(gtfs_dir)
+    trips = pd.read_csv(gtfs_dir / 'trips.txt', index_col=2)
+    routes = pd.read_csv(gtfs_dir / 'routes.txt', index_col=0)
 
     route_id_diffs = trips \
         .groupby('shape_id') \
@@ -41,20 +43,20 @@ def collect_shape_data(data_dir):
     return route_info
 
 
-def calculate_service_days(data_dir):
+def calculate_service_days(gtfs_dir):
     """Calculate the number of active days for each service.
 
     Args:
-        data_dir: the directory where the GTFS file is extracted
+        gtfs_dir: the directory where the GTFS file is extracted
 
     Returns:
         pandas.DataFrame: contains day counts by service_id
     """
 
-    data_dir = pathlib2.Path(data_dir)
+    gtfs_dir = pathlib2.Path(gtfs_dir)
 
-    calendar = pd.read_csv(data_dir / 'calendar.txt', index_col=0)
-    calendar_dates = pd.read_csv(data_dir / 'calendar_dates.txt')
+    calendar = pd.read_csv(gtfs_dir / 'calendar.txt', index_col=0)
+    calendar_dates = pd.read_csv(gtfs_dir / 'calendar_dates.txt')
 
     validity_weeks = calculate_validity_weeks(calendar)
     regular_number_of_days = calendar \
@@ -112,13 +114,58 @@ def calculate_validity_weeks(calendar):
     return validity_days // 7
 
 
+def generate_plot_data(gtfs_dir, shape_data):
+    """Generates a dataset suitable for line plots using datashader.
+
+    Args:
+        gtfs_dir: the directory where the GTFS file is extracted
+        shape_data: additional shape data that is needed for the plotting
+
+    Returns:
+        pandas.DataFrame: a DataFrame that is used for line plots
+    """
+
+    gtfs_dir = pathlib2.Path(gtfs_dir)
+    shapes = pd.read_csv(gtfs_dir / 'shapes.txt')
+
+    plotting_data = insert_empty_rows(shapes, 'shape_id') \
+        .merge(shape_data, on='shape_id', how='left')
+
+    return plotting_data
+
+
+def insert_empty_rows(df, by):
+    """ Inserts a row filled with NaNs between each chunk of the dataframe
+    separated by a variable. The resulting dataset is suitable for line plots.
+
+    Args:
+        df: a pandas.DataFrame
+        by: a column of `df` that will be used for the grouping
+
+    Returns:
+        pandas.DataFrame: the same as the input `df` with empty lines inserted
+        between groups
+    """
+
+    df_parts = []
+
+    for level, df_part in df.groupby(by):
+        empty = pd.DataFrame(
+            [[level if colname == by else np.NaN for colname in df.columns]],
+            columns=df.columns
+        )
+        df_parts.append(df_part.append(empty))
+
+    return pd.concat(df_parts)
+
+
 def main():
 
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        '-d', '--data-dir',
-        help="The diractory where the GTFS file is located",
+        '-g', '--gtfs-dir',
+        help="The diractory where the GTFS files are located",
         type=str,
         required=True
     )
@@ -131,9 +178,19 @@ def main():
 
     args = parser.parse_args()
     if not args.out_dir:
-        args.out_dir = args.data_dir
+        args.out_dir = args.gtfs_dir
 
-    shape_data = collect_shape_data(args.data_dir)
+    shape_data = collect_shape_data(args.gtfs_dir)
+    plot_data = generate_plot_data(args.gtfs_dir, shape_data)
+
+    out_dir = pathlib2.Path(args.out_dir)
+    if not os.path.exists(out_dir):
+        os.makedirs(out_dir)
+    elif not os.path.isdir(out_dir):
+        raise NotADirectoryError("The object at out_dir exists but is not a directory")
+
+    shape_data.to_csv(out_dir / 'shape_data.csv', index=False)
+    plot_data.to_csv(out_dir / 'plot_data.csv', index=False)
 
 
 if __name__ == "__main__":
