@@ -23,7 +23,8 @@ rule figures:
 
 rule download_data:
     input:
-        script = join(config["src_utils"], "obtain_data.py")
+        script = join(config["src_utils"], "obtain_data.py"),
+        config = "config.yaml"
     output:
         files = expand(
             join(config["raw_data_dir"], "{gtfs_file}.txt"),
