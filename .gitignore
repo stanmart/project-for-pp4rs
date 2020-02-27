@@ -1,5 +1,6 @@
 # Snakemake
 .snakemake/
+build_graphs/
 
 # VSCode
 .vscode/

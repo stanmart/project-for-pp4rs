@@ -69,22 +69,22 @@ rule filegraph:
     input:
         "Snakefile"
     output:
-        "filegraph.pdf"
+        "build_graphs/filegraph.pdf"
     shell:
-        "snakemake --filegraph | dot -Tpdf > filegraph.pdf"
+        "snakemake --filegraph | dot -Tpdf > build_graphs/filegraph.pdf"
 
 rule rulegraph:
     input:
         "Snakefile"
     output:
-        "filegraph.pdf"
+        "build_graphs/rulegraph.pdf"
     shell:
-        "snakemake --rulegraph | dot -Tpdf > rulegraph.pdf"
+        "snakemake --rulegraph | dot -Tpdf > build_graphs/rulegraph.pdf"
 
 rule dag:
     input:
         "Snakefile"
     output:
-        "filegraph.pdf"
+        "build_graphs/dag.pdf"
     shell:
-        "snakemake --dag | dot -Tpdf > dag.pdf"
+        "snakemake --dag | dot -Tpdf > build_graphs/dag.pdf"
