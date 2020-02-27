@@ -1,13 +1,17 @@
-FIGS = glob_wildcards("src/figures/{i_file}.py").i_file
+from os.path import join
+configfile: "config.yaml"
+
+
+FIGS = glob_wildcards(join(config["src_figures"], "{i_file}.py")).i_file
 rule temp_top:
     input:
-        figs = expand("out/figures/{i_figure}.png", i_figure = FIGS)
+        figs = expand(join(config["figure_dir"], "{i_figure}.png"), i_figure = FIGS)
 
 
 rule figures:
     input:
-        script = "src/figures/{i_figure}.py",
-        dataset = "out/data/plot_data.csv"
+        script = join(config["src_figures"], "{i_figure}.py"),
+        dataset = join(config["compiled_data_dir"], "plot_data.csv")
     output:
         png = "out/figures/{i_figure}.png"
     shell:
@@ -19,15 +23,15 @@ rule figures:
 
 rule download_data:
     input:
-        script = "src/utils/obtain_data.py"
+        script = join(config["src_utils"], "obtain_data.py")
     output:
         files = expand(
-            "out/data/{gtfs_file}.txt",
-            gtfs_file = ["trips", "routes", "calendar", "calendar_dates", "shapes"]
+            join(config["raw_data_dir"], "{gtfs_file}.txt"),
+            gtfs_file = config["gtfs_contents"]
         )
     params:
-        out_dir = "out/data",
-        url = "https://data.stadt-zuerich.ch/dataset/ec7bb57c-f0aa-4e8e-9266-f0b7112f6355/resource/8756b31e-7d2c-4a31-bf16-ab23adbf41b4/download/2020_google_transit.zip"
+        out_dir = config["raw_data_dir"],
+        url = config["url"]
     shell:
         "python {input.script} \
             --url {params.url} \
@@ -36,19 +40,18 @@ rule download_data:
 
 rule reshape_data:
     input:
-        script = "src/utils/reshape_data.py",
+        script = join(config["src_utils"], "reshape_data.py"),
         files = expand(
-            "out/data/{gtfs_file}.txt",
-            gtfs_file = ["trips", "routes", "calendar", "calendar_dates", "shapes"]
+            join(config["raw_data_dir"], "{gtfs_file}.txt"),
+            gtfs_file = config["gtfs_contents"]
         )
     output:
         datasets = expand(
-            "out/data/{reshaped_file}.csv",
+            join(config["compiled_data_dir"], "{reshaped_file}.csv"),
             reshaped_file = ["shape_data", "plot_data"]
         )
     params:
-        data_dir = "out/data",
-        url = "https://data.stadt-zuerich.ch/dataset/ec7bb57c-f0aa-4e8e-9266-f0b7112f6355/resource/8756b31e-7d2c-4a31-bf16-ab23adbf41b4/download/2020_google_transit.zip"
+        data_dir = config["raw_data_dir"]
     shell:
         "python {input.script} \
             --gtfs-dir {params.data_dir} \
