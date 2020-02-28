@@ -30,8 +30,23 @@ rule figures:
     shell:
         "python {input.script} \
             --data {input.dataset} \
-            --out {output} \
+            --out {output.png} \
             --width 1600"
+
+
+rule table_longest_routes:
+    input:
+        script = join(config["src_tables"], "table_longest_routes.py"),
+        shape_data = join(config["compiled_data_dir"], "shape_data.csv"),
+        distance_data = join(config["compiled_data_dir"], "distance_data.csv")
+    output:
+        tex = "out/tables/table_longest_routes.tex"
+    shell:
+        "python {input.script} \
+            --shape-data {input.shape_data} \
+            --distance-data {input.distance_data} \
+            --out {output.tex} \
+            --num-rows 10"
 
 
 rule download_data:

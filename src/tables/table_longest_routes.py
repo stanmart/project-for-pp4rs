@@ -56,7 +56,7 @@ def main():
         required=True
     )
     parser.add_argument(
-        '-n', '--num_rows',
+        '-n', '--num-rows',
         help="Number of longest routes to display",
         type=int,
         default=10
