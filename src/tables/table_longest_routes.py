@@ -4,11 +4,12 @@ import pandas as pd
 
 
 def create_table(shape_data, distance_data, out, num_rows):
-    """Creates a figure of the ZVV transit network without any grouping.
+    """Creates a table of the n longest routes (shapes) and saves it as a tex file.
 
     Args:
-        data: a csv file containing data usable for line plots
-        out: the generated imnage is saved here
+        shape_data: a csv file containing shape data
+        distance_data: a csv file containing distance data
+        out: the generated table is saved here
 
     Returns:
         None
