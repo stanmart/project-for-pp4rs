@@ -39,24 +39,37 @@ rule download_data:
             --out-dir {params.out_dir}"
 
 
-rule reshape_data:
+rule create_shape_data:
     input:
         script = join(config["src_utils"], "reshape_data.py"),
-        files = expand(
+        gtfs_files = expand(
             join(config["raw_data_dir"], "{gtfs_file}.txt"),
-            gtfs_file = config["gtfs_contents"]
+            gtfs_file = ["trips", "routes", "calendar", "calendar_dates"]
         )
     output:
-        datasets = expand(
-            join(config["compiled_data_dir"], "{reshaped_file}.csv"),
-            reshaped_file = ["shape_data", "plot_data"]
-        )
+        csv = join(config["compiled_data_dir"], "shape_data.csv")
     params:
-        data_dir = config["raw_data_dir"]
+        gtfs_dir = config["raw_data_dir"]
     shell:
-        "python {input.script} \
-            --gtfs-dir {params.data_dir} \
-            --out-dir {params.data_dir}"
+        "python {input.script} shape \
+            --gtfs-dir {params.gtfs_dir} \
+            --out {output.csv}"
+
+
+rule create_plot_data:
+    input:
+        script = join(config["src_utils"], "reshape_data.py"),
+        shape_data = join(config["compiled_data_dir"], "shape_data.csv"),
+        gtfs_shapes = join(config["raw_data_dir"], "shapes.txt")
+    output:
+        csv = join(config["compiled_data_dir"], "plot_data.csv")
+    params:
+        gtfs_dir = config["raw_data_dir"]
+    shell:
+        "python {input.script} plot \
+            --gtfs-dir {params.gtfs_dir} \
+            --shape-data {input.shape_data} \
+            --out {output.csv}"
 
 
 rule clean:

@@ -1,4 +1,3 @@
-import os
 import pathlib2
 import argparse
 import datetime
@@ -162,35 +161,55 @@ def insert_empty_rows(df, by):
 def main():
 
     parser = argparse.ArgumentParser()
+    subparsers = parser.add_subparsers(dest='command')
 
-    parser.add_argument(
+    parser_shape = subparsers.add_parser(
+        'shape', help="Create a csv file containing shape info"
+    )
+    parser_shape.add_argument(
         '-g', '--gtfs-dir',
-        help="The diractory where the GTFS files are located",
+        help="The directory where the GTFS files are located",
         type=str,
         required=True
     )
-    parser.add_argument(
-        '-o', '--out-dir',
-        help="The diractory where the new data files are created. \
-              Default is the same as the data directory.",
-        type=str
+    parser_shape.add_argument(
+        '-o', '--out',
+        help="The path of the file to be created",
+        type=str,
+        required=True
+    )
+
+    parser_plot = subparsers.add_parser(
+        'plot', help="Create a csv file suitable for line plots"
+    )
+    parser_plot.add_argument(
+        '-g', '--gtfs-dir',
+        help="The directory where the GTFS files are located",
+        type=str,
+        required=True
+    )
+    parser_plot.add_argument(
+        '-s', '--shape-data',
+        help="The path of the csv file containing shape data",
+        type=str,
+        required=True
+    )
+    parser_plot.add_argument(
+        '-o', '--out',
+        help="The path of the file to be created",
+        type=str,
+        required=True
     )
 
     args = parser.parse_args()
-    if not args.out_dir:
-        args.out_dir = args.gtfs_dir
 
-    shape_data = collect_shape_data(args.gtfs_dir)
-    plot_data = generate_plot_data(args.gtfs_dir, shape_data)
-
-    out_dir = pathlib2.Path(args.out_dir)
-    if not os.path.exists(out_dir):
-        os.makedirs(out_dir)
-    elif not os.path.isdir(out_dir):
-        raise NotADirectoryError("The object at out_dir exists but is not a directory")
-
-    shape_data.to_csv(out_dir / 'shape_data.csv', index=False)
-    plot_data.to_csv(out_dir / 'plot_data.csv', index=False)
+    if args.command == 'shape':
+        shape_data = collect_shape_data(args.gtfs_dir)
+        shape_data.to_csv(args.out, index=False)
+    elif args.command == 'plot':
+        shape_data = pd.read_csv(args.shape_data)
+        plot_data = generate_plot_data(args.gtfs_dir, shape_data)
+        plot_data.to_csv(args.out, index=False)
 
 
 if __name__ == "__main__":
