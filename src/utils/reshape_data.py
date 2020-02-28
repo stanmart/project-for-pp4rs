@@ -158,6 +158,40 @@ def insert_empty_rows(df, by):
     return pd.concat(df_parts)
 
 
+def calculate_shape_length(gtfs_dir):
+    """Contains the length of each shape in the GTFS file.
+
+    Args:
+        gtfs_dir: the directory where the GTFS file is extracted
+        shape_data: additional shape data that is needed for the plotting
+
+    Returns:
+        pandas.DataFrame: a DataFrame that is used for line plots
+    """
+
+    gtfs_dir = pathlib2.Path(gtfs_dir)
+    shapes = pd.read_csv(gtfs_dir / 'shapes.txt')
+
+    shape_lengths = shapes \
+        .assign(
+            x_km=lambda df: 40075 / 360 * df.shape_pt_lon * np.cos(df.shape_pt_lat),
+            y_km=lambda df: 40075 / 360 * df.shape_pt_lat
+        ) \
+        .loc[:, ["shape_id", "x_km", "y_km"]] \
+        .groupby('shape_id') \
+        .apply(
+            lambda df_part: df_part
+            .diff()
+            .fillna(0)
+            .assign(distance=lambda df: np.sqrt(df.x_km ** 2 + df.y_km ** 2))
+            .sum()
+        ) \
+        .reset_index() \
+        .loc[:, ["shape_id", "distance"]]
+
+    return shape_lengths
+
+
 def main():
 
     parser = argparse.ArgumentParser()
