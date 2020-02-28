@@ -2,10 +2,10 @@ from os.path import join
 configfile: "config.yaml"
 
 
-FIGS = glob_wildcards(join(config["src_figures"], "{i_file}.py")).i_file
+FIGS = glob_wildcards(join(config["src_figures"], "plot_{plot_name}.py")).plot_name
 rule temp_top:
     input:
-        figs = expand(join(config["figure_dir"], "{i_figure}.png"), i_figure = FIGS)
+        figs = expand(join(config["figure_dir"], "plot_{plot_name}.png"), plot_name = FIGS)
 
 
 rule figures:
@@ -69,6 +69,20 @@ rule create_plot_data:
         "python {input.script} plot \
             --gtfs-dir {params.gtfs_dir} \
             --shape-data {input.shape_data} \
+            --out {output.csv}"
+
+
+rule create_distance_data:
+    input:
+        script = join(config["src_utils"], "reshape_data.py"),
+        gtfs_shapes = join(config["raw_data_dir"], "shapes.txt")
+    output:
+        csv = join(config["compiled_data_dir"], "distance_data.csv")
+    params:
+        gtfs_dir = config["raw_data_dir"]
+    shell:
+        "python {input.script} distance \
+            --gtfs-dir {params.gtfs_dir} \
             --out {output.csv}"
 
 
