@@ -11,14 +11,14 @@ rule paper:
         )
     output:
         pdf = join(config["paper_dir"], "paper.pdf"),
-        root_dir_pdf = "./paper.pdf"
+        root_dir_pdf = "paper.pdf"
     params:
         pdf_wo_ext = join(config["paper_dir"], "paper")
     shell:
         "latexmk -pdf \
                  -jobname={params.pdf_wo_ext} \
                  {input.tex} \
-        && cp {output.pdf} ./paper.pdf"
+        && cp {output.pdf} paper.pdf"
 
 
 rule figures:
@@ -47,6 +47,18 @@ rule table_longest_routes:
             --distance-data {input.distance_data} \
             --out {output.tex} \
             --num-rows 10"
+
+
+rule table_vehicle_distribution:
+    input:
+        script = join(config["src_tables"], "table_vehicle_distribution.py"),
+        shape_data = join(config["compiled_data_dir"], "shape_data.csv")
+    output:
+        tex = "out/tables/table_vehicle_distribution.tex"
+    shell:
+        "python {input.script} \
+            --shape-data {input.shape_data} \
+            --out {output.tex}"
 
 
 rule download_data:
