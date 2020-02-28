@@ -1,0 +1,42 @@
+\documentclass[a4paper]{article}
+
+\usepackage{fullpage}
+\usepackage{lipsum}
+\usepackage{microtype}
+\usepackage{booktabs}
+\usepackage{graphicx}
+
+\author{Martin Stancsics}
+\title{A short but imaginative title}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+\lipsum[1-3]
+
+\section{The section with figures}
+\lipsum[4]
+\begin{figure}
+    \centering
+    \includegraphics[width=0.7\textwidth]{out/figures/plot_fire.png}
+    \caption{ZVV lines weighted by number of trips}
+\end{figure}
+\lipsum[5]
+\begin{figure}
+    \centering
+    \includegraphics[width=0.7\textwidth]{out/figures/plot_colored.png}
+    \caption{ZVV lines weighted by number of trips -- using official ZVV colors}
+\end{figure}
+
+\section{The section with tables}
+\lipsum[6]
+
+\lipsum[7]
+
+\section{My earth-shattering conclusions}
+\lipsum[8-9]
+
+\end{document}
