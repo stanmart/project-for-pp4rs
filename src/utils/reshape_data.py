@@ -235,6 +235,22 @@ def main():
         required=True
     )
 
+    distance_plot = subparsers.add_parser(
+        'distance', help="Create a csv file containing shape lengths"
+    )
+    distance_plot.add_argument(
+        '-g', '--gtfs-dir',
+        help="The directory where the GTFS files are located",
+        type=str,
+        required=True
+    )
+    distance_plot.add_argument(
+        '-o', '--out',
+        help="The path of the file to be created",
+        type=str,
+        required=True
+    )
+
     args = parser.parse_args()
 
     if args.command == 'shape':
@@ -244,6 +260,9 @@ def main():
         shape_data = pd.read_csv(args.shape_data)
         plot_data = generate_plot_data(args.gtfs_dir, shape_data)
         plot_data.to_csv(args.out, index=False)
+    elif args.command == 'distance':
+        distance_data = calculate_shape_length(args.gtfs_dir)
+        distance_data.to_csv(args.out, index=False)
 
 
 if __name__ == "__main__":
