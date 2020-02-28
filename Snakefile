@@ -2,10 +2,23 @@ from os.path import join
 configfile: "config.yaml"
 
 
-FIGS = glob_wildcards(join(config["src_figures"], "plot_{plot_name}.py")).plot_name
-rule temp_top:
+rule paper:
     input:
-        figs = expand(join(config["figure_dir"], "plot_{plot_name}.png"), plot_name = FIGS)
+        tex = join(config["src_paper"], "paper.tex"),
+        figures = expand(
+            join(config["figure_dir"], "{plot_name}.png"),
+            plot_name = ["plot_fire", "plot_colored"]
+        )
+    output:
+        pdf = join(config["paper_dir"], "paper.pdf"),
+        root_dir_pdf = "./paper.pdf"
+    params:
+        pdf_wo_ext = join(config["paper_dir"], "paper")
+    shell:
+        "latexmk -pdf \
+                 -jobname={params.pdf_wo_ext} \
+                 {input.tex} \
+        && cp {output.pdf} ./paper.pdf"
 
 
 rule figures:

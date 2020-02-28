@@ -15,3 +15,5 @@ A pdf file containing some pretty graphs and some meaningless tables about the Z
 The project has a [snakemake](https://snakemake.readthedocs.io/en/stable/) file. If snakemake is installed it can be compiled from scratch using the `snakemake` command in its root directory.
 
 Required packages can be installed using your package manager of choice from `requirements.txt`. Alternatively, the script `install_requirements.sh` is provided to install all required packages locally in the project folder using conda. After that `conda activate ./venv` has to be issued before running snakemake.
+
+ Also, `latexmk` is required for the compilation of the final document. Install it using your local package manager.

@@ -6,9 +6,11 @@ compiled_data_dir: "out/data"
 src_figures: "src/figures"
 src_tables: "src/tables"
 src_utils: "src/utils"
+src_paper: "src/paper"
 
 figure_dir: "out/figures"
 table_dir: "out/tables"
+paper_dir: "out/paper"
 
 gtfs_contents:
   - "trips"
