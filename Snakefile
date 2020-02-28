@@ -8,7 +8,9 @@ rule paper:
         figures = expand(
             join(config["figure_dir"], "{plot_name}.png"),
             plot_name = ["plot_fire", "plot_colored"]
-        )
+        ),
+        table_vehicle_distr = join(config["table_dir"], "table_vehicle_distribution.tex"),
+        table_longest_routes = join(config["table_dir"], "table_longest_routes.tex")
     output:
         pdf = join(config["paper_dir"], "paper.pdf"),
         root_dir_pdf = "paper.pdf"
