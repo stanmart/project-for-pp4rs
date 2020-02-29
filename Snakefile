@@ -1,17 +1,14 @@
 from os.path import join
+from src.utils.make import find_input_files
 configfile: "config.yaml"
+
+latex_inputs = find_input_files(join(config["src_paper"], "paper.tex"))
 
 
 rule paper:
     input:
         tex = join(config["src_paper"], "paper.tex"),
-        figures = expand(
-            join(config["figure_dir"], "{plot_name}.png"),
-            plot_name = ["plot_fire", "plot_colored"]
-        ),
-        table_vehicle_distr = join(config["table_dir"], "table_vehicle_distribution.tex"),
-        table_longest_routes = join(config["table_dir"], "table_longest_routes.tex"),
-        table_regressions = join(config["table_dir"], "table_regressions.tex")
+        included = latex_inputs
     output:
         pdf = join(config["paper_dir"], "paper.pdf"),
         root_dir_pdf = "paper.pdf"
