@@ -1,5 +1,6 @@
 import argparse
 import pickle
+import re
 from stargazer.stargazer import Stargazer
 
 
@@ -30,8 +31,12 @@ def create_table(models, out):
     table.custom_columns(model_names, [1] * len(model_names))
     table.rename_covariates(covariate_names)
 
+    latex_table = table.render_latex()
+    latex_table = re.sub(r"l(c+)\}", r"lc\1}", latex_table)
+        # ugly hack because stargazer generates an invalid latex table
+
     with open(out, 'w') as file:
-        file.write(table.render_latex())
+        file.write(latex_table)
 
 
 def main():
