@@ -10,7 +10,8 @@ rule paper:
             plot_name = ["plot_fire", "plot_colored"]
         ),
         table_vehicle_distr = join(config["table_dir"], "table_vehicle_distribution.tex"),
-        table_longest_routes = join(config["table_dir"], "table_longest_routes.tex")
+        table_longest_routes = join(config["table_dir"], "table_longest_routes.tex"),
+        table_regressions = join(config["table_dir"], "table_regressions.tex")
     output:
         pdf = join(config["paper_dir"], "paper.pdf"),
         root_dir_pdf = "paper.pdf"
