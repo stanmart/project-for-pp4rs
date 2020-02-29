@@ -128,6 +128,20 @@ rule create_distance_data:
             --out {output.csv}"
 
 
+rule create_regression_data:
+    input:
+        script = join(config["src_utils"], "reshape_data.py"),
+        shape_data = join(config["raw_data_dir"], "shape_data.csv"),
+        distance_data = join(config["raw_data_dir"], "distance_data.csv")
+    output:
+        csv = join(config["compiled_data_dir"], "regression_data.csv")
+    shell:
+        "python {input.script} regression \
+            --shape-data {input.shape_data} \
+            --distance {input.distance_data} \
+            --out {output.csv}"
+
+
 rule clean:
     shell:
         "rm -r out/*"

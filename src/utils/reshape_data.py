@@ -5,6 +5,27 @@ import numpy as np
 import pandas as pd
 
 
+def create_regression_data(shape_data, distance_data):
+    """Combines the shape and distance data into a single file for regressions.
+
+    Args:
+        shape_data: a csv file containing shape data
+        distance_data: a csv file containing distance data
+
+    Returns:
+        pandas.DataFrame: contains shape data
+    """
+
+    shape_data = pd.read_csv(shape_data, low_memory=True)
+    distance_data = pd.read_csv(distance_data, low_memory=True)
+
+    regression_data = shape_data \
+        .merge(distance_data, on="shape_id") \
+        .loc[:, ["shape_id", "route_id", "route_type", "route_color", "times_taken", "distance"]]
+
+    return regression_data
+
+
 def collect_shape_data(gtfs_dir):
     """Calculate the number of times a shape (line on a map) is travelled.
     Appends some additional information about the route that the shape belongs to.
@@ -251,6 +272,28 @@ def main():
         required=True
     )
 
+    distance_plot = subparsers.add_parser(
+        'regression', help="Create a csv file containing data for regressions"
+    )
+    distance_plot.add_argument(
+        '-s', '--shape-data',
+        help="The path of the csv file containing shape data",
+        type=str,
+        required=True
+    )
+    distance_plot.add_argument(
+        '-d', '--distance-data',
+        help="The path of the csv file containing distance data",
+        type=str,
+        required=True
+    )
+    distance_plot.add_argument(
+        '-o', '--out',
+        help="The path of the file to be created",
+        type=str,
+        required=True
+    )
+
     args = parser.parse_args()
 
     if args.command == 'shape':
@@ -263,6 +306,9 @@ def main():
     elif args.command == 'distance':
         distance_data = calculate_shape_length(args.gtfs_dir)
         distance_data.to_csv(args.out, index=False)
+    elif args.command == 'regression':
+        regression_data = create_regression_data(args.shape_data, args.distance_data)
+        regression_data.to_csv(args.out, index=False)
 
 
 if __name__ == "__main__":
