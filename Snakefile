@@ -38,11 +38,11 @@ rule figures:
 
 rule models:
     input:
-        script = join(config["src_models"], "estimate_ols.py"),
-        specs = join(config["src_models"], "{i_model}.yaml"),
+        script = join(config["src_models"], "estimate_model.py"),
+        specs = join(config["src_model_specs"], "{i_model}.yaml"),
         dataset = join(config["compiled_data_dir"], "regression_data.csv")
     output:
-        pickle = "out/figures/{i_figure}.pkl"
+        pickle = "out/models/{i_model}.pkl"
     shell:
         "python {input.script} \
             --data {input.dataset} \
