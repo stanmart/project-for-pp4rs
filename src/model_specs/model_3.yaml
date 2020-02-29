@@ -2,5 +2,5 @@ name: "Economists love logs"
 dep_var: 
   times_taken: "Times taken"
 indep_vars:
-  np.log(distance): "Distance"
+  np.log(distance): "Log distance"
 cov_type: "HC1"

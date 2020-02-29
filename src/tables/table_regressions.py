@@ -33,7 +33,7 @@ def create_table(models, out):
 
     latex_table = table.render_latex()
     latex_table = re.sub(r"l(c+)\}", r"lc\1}", latex_table)
-        # ugly hack because stargazer generates an invalid latex table
+    # ugly hack because stargazer generates an invalid latex table
 
     with open(out, 'w') as file:
         file.write(latex_table)
