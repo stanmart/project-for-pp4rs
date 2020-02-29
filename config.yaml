@@ -4,7 +4,6 @@ models:
   - model_1
   - model_2
   - model_3
-  - model_4
 
 raw_data_dir: "out/data"
 compiled_data_dir: "out/data"

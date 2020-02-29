@@ -1,4 +1,4 @@
-name: "Some non-linearity model"
+name: "Some non-linearity"
 dep_var: 
   times_taken: "Times taken"
 indep_vars:
