@@ -1,0 +1,7 @@
+name: "Maybe color is the key"
+dep_var: 
+  times_taken: "Times taken"
+indep_vars:
+  distance: "Distance"
+  route_color: "Route color"
+cov_type: "HC1"

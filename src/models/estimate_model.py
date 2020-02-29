@@ -3,6 +3,7 @@ import pandas as pd
 import statsmodels.formula.api as smf
 import pickle
 import yaml
+import numpy as np  # noqa: F401
 
 
 def estimate_ols(data, specs, out):

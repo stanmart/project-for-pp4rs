@@ -1,0 +1,7 @@
+name: "Some non-linearity model"
+dep_var: 
+  times_taken: "Times taken"
+indep_vars:
+  distance: "Distance"
+  I(distance ** 2): "Distance squared"
+cov_type: "HC1"
