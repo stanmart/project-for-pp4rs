@@ -77,6 +77,21 @@ rule table_vehicle_distribution:
             --out {output.tex}"
 
 
+rule table_regressions:
+    input:
+        script = join(config["src_tables"], "table_regressions.py"),
+        models = expand(
+            join(config["model_dir"], "{i_model}.pkl"),
+            i_model=config['models']
+        )
+    output:
+        tex = "out/tables/table_regressions.tex"
+    shell:
+        "python {input.script} \
+            --reg-results {input.models} \
+            --out {output.tex}"
+
+
 rule download_data:
     input:
         script = join(config["src_utils"], "obtain_data.py"),

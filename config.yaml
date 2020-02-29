@@ -1,5 +1,11 @@
 url : "https://data.stadt-zuerich.ch/dataset/ec7bb57c-f0aa-4e8e-9266-f0b7112f6355/resource/8756b31e-7d2c-4a31-bf16-ab23adbf41b4/download/2020_google_transit.zip"
 
+models:
+  - model_1
+  - model_2
+  - model_3
+  - model_4
+
 raw_data_dir: "out/data"
 compiled_data_dir: "out/data"
 
@@ -13,6 +19,7 @@ src_model_specs: "src/model_specs"
 figure_dir: "out/figures"
 table_dir: "out/tables"
 paper_dir: "out/paper"
+model_dir: "out/models"
 
 gtfs_contents:
   - "trips"
