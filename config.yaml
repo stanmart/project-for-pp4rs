@@ -7,6 +7,8 @@ src_figures: "src/figures"
 src_tables: "src/tables"
 src_utils: "src/utils"
 src_paper: "src/paper"
+src_models: "src/models"
+src_model_specs: "src/model_specs"
 
 figure_dir: "out/figures"
 table_dir: "out/tables"

@@ -36,6 +36,20 @@ rule figures:
             --width 1600"
 
 
+rule models:
+    input:
+        script = join(config["src_models"], "estimate_ols.py"),
+        specs = join(config["src_models"], "{i_model}.yaml"),
+        dataset = join(config["compiled_data_dir"], "regression_data.csv")
+    output:
+        pickle = "out/figures/{i_figure}.pkl"
+    shell:
+        "python {input.script} \
+            --data {input.dataset} \
+            --specs {input.specs} \
+            --out {output.pickle}"
+
+
 rule table_longest_routes:
     input:
         script = join(config["src_tables"], "table_longest_routes.py"),
