@@ -1,6 +1,6 @@
 name: "Economists love logs"
 dep_var: 
-  np.log(times_taken): "Log of times taken"
+  times_taken: "Times taken"
 indep_vars:
   np.log(distance): "Distance"
 cov_type: "HC1"
