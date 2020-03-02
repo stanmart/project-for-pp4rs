@@ -1,4 +1,4 @@
-import pathlib2
+import pathlib
 import argparse
 import datetime
 import numpy as np
@@ -37,7 +37,7 @@ def collect_shape_data(gtfs_dir):
         pandas.DataFrame: contains shape data
     """
 
-    gtfs_dir = pathlib2.Path(gtfs_dir)
+    gtfs_dir = pathlib.Path(gtfs_dir)
 
     service_days = calculate_service_days(gtfs_dir)
     trips = pd.read_csv(gtfs_dir / 'trips.txt', index_col=2)
@@ -73,7 +73,7 @@ def calculate_service_days(gtfs_dir):
         pandas.DataFrame: contains day counts by service_id
     """
 
-    gtfs_dir = pathlib2.Path(gtfs_dir)
+    gtfs_dir = pathlib.Path(gtfs_dir)
 
     calendar = pd.read_csv(gtfs_dir / 'calendar.txt', index_col=0)
     calendar_dates = pd.read_csv(gtfs_dir / 'calendar_dates.txt')
@@ -145,7 +145,7 @@ def generate_plot_data(gtfs_dir, shape_data):
         pandas.DataFrame: a DataFrame that is used for line plots
     """
 
-    gtfs_dir = pathlib2.Path(gtfs_dir)
+    gtfs_dir = pathlib.Path(gtfs_dir)
     shapes = pd.read_csv(gtfs_dir / 'shapes.txt')
 
     plotting_data = insert_empty_rows(shapes, 'shape_id') \
@@ -190,7 +190,7 @@ def calculate_shape_length(gtfs_dir):
         pandas.DataFrame: a DataFrame that is used for line plots
     """
 
-    gtfs_dir = pathlib2.Path(gtfs_dir)
+    gtfs_dir = pathlib.Path(gtfs_dir)
     shapes = pd.read_csv(gtfs_dir / 'shapes.txt')
 
     shape_lengths = shapes \
