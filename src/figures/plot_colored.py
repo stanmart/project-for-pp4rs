@@ -21,7 +21,7 @@ def create_plot(data, out, width):
     x_range = (plot_data.shape_pt_lon.min(), plot_data.shape_pt_lon.max())
     y_range = (plot_data.shape_pt_lat.min(), plot_data.shape_pt_lat.max())
 
-    height = round(width * (y_range[1] - y_range[0]) / (x_range[1] - x_range[0]))
+    height = int(round(width * (y_range[1] - y_range[0]) / (x_range[1] - x_range[0])))
 
     cvs = ds.Canvas(
         plot_width=width,
