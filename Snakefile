@@ -1,8 +1,19 @@
-from os.path import join
-from src.utils.make import find_input_files
+import platform
+from src.utils.make import find_input_files, join
 configfile: "config.yaml"
 
 latex_inputs = find_input_files(join(config["src_paper"], "paper.tex"))
+
+
+rule copy_paper:
+    input:
+        pdf = join(config["paper_dir"], "paper.pdf")
+    output:
+        root_dir_pdf = "paper.pdf"
+    params:
+        cmd = "copy" if platform.system() == "Windows" else "cp"
+    shell:
+        "{params.cmd} {input.pdf} {output.root_dir_pdf}"
 
 
 rule paper:
@@ -17,8 +28,7 @@ rule paper:
     shell:
         "latexmk -pdf \
                  -jobname={params.pdf_wo_ext} \
-                 {input.tex} \
-        && cp {output.pdf} paper.pdf"
+                 {input.tex}"
 
 
 rule figures:
@@ -26,7 +36,7 @@ rule figures:
         script = join(config["src_figures"], "{i_figure}.py"),
         dataset = join(config["compiled_data_dir"], "plot_data.csv")
     output:
-        png = "out/figures/{i_figure}.png"
+        png = join(config["figure_dir"], "{i_figure}.png")
     shell:
         "python {input.script} \
             --data {input.dataset} \
@@ -40,7 +50,7 @@ rule models:
         specs = join(config["src_model_specs"], "{i_model}.yaml"),
         dataset = join(config["compiled_data_dir"], "regression_data.csv")
     output:
-        pickle = "out/models/{i_model}.pkl"
+        pickle = join(config["model_dir"], "{i_model}.pkl")
     shell:
         "python {input.script} \
             --data {input.dataset} \
@@ -54,7 +64,7 @@ rule table_longest_routes:
         shape_data = join(config["compiled_data_dir"], "shape_data.csv"),
         distance_data = join(config["compiled_data_dir"], "distance_data.csv")
     output:
-        tex = "out/tables/table_longest_routes.tex"
+        tex = join(config["table_dir"], "table_longest_routes.tex")
     shell:
         "python {input.script} \
             --shape-data {input.shape_data} \
@@ -68,7 +78,7 @@ rule table_vehicle_distribution:
         script = join(config["src_tables"], "table_vehicle_distribution.py"),
         shape_data = join(config["compiled_data_dir"], "shape_data.csv")
     output:
-        tex = "out/tables/table_vehicle_distribution.tex"
+        tex = join(config["table_dir"], "table_vehicle_distribution.tex")
     shell:
         "python {input.script} \
             --shape-data {input.shape_data} \
@@ -83,7 +93,7 @@ rule table_regressions:
             i_model=config['models']
         )
     output:
-        tex = "out/tables/table_regressions.tex"
+        tex = join(config["table_dir"], "table_regressions.tex")
     shell:
         "python {input.script} \
             --reg-results {input.models} \

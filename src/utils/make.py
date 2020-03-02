@@ -1,4 +1,5 @@
 import re
+import os
 
 
 def find_input_files(tex_file):
@@ -21,4 +22,20 @@ def find_input_files(tex_file):
         re.compile(r"\\includegraphics(?:\[.*\])?\{(.*)\}")
     ]
 
-    return sum((pattern.findall(tex_contents) for pattern in patterns), [])
+    paths = sum((pattern.findall(tex_contents) for pattern in patterns), [])
+
+    return [os.path.normpath(path) for path in paths]
+
+
+def join(path1, path2):
+    """Join and normalize two paths.
+
+    Args:
+        path1: a path string
+        path2: a path string
+
+    Returns:
+        str: a path string
+    """
+
+    return os.path.normpath(os.path.join(path1, path2))

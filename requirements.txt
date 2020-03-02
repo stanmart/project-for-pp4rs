@@ -1,5 +1,5 @@
 numpy==1.17
-snakemake==5.10
+snakemake-minimal==5.10
 pandas==0.25
 datashader==0.10
 colorcet==2.0
