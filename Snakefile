@@ -21,8 +21,7 @@ rule paper:
         tex = join(config["src_paper"], "paper.tex"),
         included = latex_inputs
     output:
-        pdf = join(config["paper_dir"], "paper.pdf"),
-        root_dir_pdf = "paper.pdf"
+        pdf = join(config["paper_dir"], "paper.pdf")
     params:
         pdf_wo_ext = join(config["paper_dir"], "paper")
     shell:
