@@ -1,0 +1,22 @@
+name: project-for-pp4rs
+
+channels:
+  - conda-forge
+
+dependencies:
+  # Python deps
+  - python=3.8
+  - pip
+  - numpy=1.17
+  - bioconda::snakemake-minimal=5.10
+  - pandas=0.25
+  - datashader=0.10
+  - colorcet=2.0
+  - requests=2.22
+  - statsmodels=0.10
+  - pyyaml=5.1
+  - pip:
+    - stargazer==0.0.4
+
+  # Other binaries
+  - latexmk
