@@ -1,4 +1,4 @@
-url : "https://data.stadt-zuerich.ch/dataset/ec7bb57c-f0aa-4e8e-9266-f0b7112f6355/resource/8756b31e-7d2c-4a31-bf16-ab23adbf41b4/download/2020_google_transit.zip"
+url : "https://data.stadt-zuerich.ch/dataset/vbz_fahrplandaten_gtfs/download/2020_google_transit.zip"
 
 models:
   - model_1
