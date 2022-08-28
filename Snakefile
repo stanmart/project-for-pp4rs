@@ -12,6 +12,8 @@ rule copy_paper:
         root_dir_pdf = "paper.pdf"
     params:
         cmd = "copy" if platform.system() == "Windows" else "cp"
+    conda:
+        "environment.yml"
     shell:
         "{params.cmd} {input.pdf} {output.root_dir_pdf}"
 
@@ -24,6 +26,8 @@ rule paper:
         pdf = join(config["paper_dir"], "paper.pdf")
     params:
         pdf_wo_ext = join(config["paper_dir"], "paper")
+    conda:
+        "environment.yml"
     shell:
         "latexmk -pdf \
                  -jobname={params.pdf_wo_ext} \
@@ -36,6 +40,8 @@ rule figures:
         dataset = join(config["compiled_data_dir"], "plot_data.csv")
     output:
         png = join(config["figure_dir"], "{i_figure}.png")
+    conda:
+        "environment.yml"
     shell:
         "python {input.script} \
             --data {input.dataset} \
@@ -50,6 +56,8 @@ rule models:
         dataset = join(config["compiled_data_dir"], "regression_data.csv")
     output:
         pickle = join(config["model_dir"], "{i_model}.pkl")
+    conda:
+        "environment.yml"
     shell:
         "python {input.script} \
             --data {input.dataset} \
@@ -64,6 +72,8 @@ rule table_longest_routes:
         distance_data = join(config["compiled_data_dir"], "distance_data.csv")
     output:
         tex = join(config["table_dir"], "table_longest_routes.tex")
+    conda:
+        "environment.yml"
     shell:
         "python {input.script} \
             --shape-data {input.shape_data} \
@@ -78,6 +88,8 @@ rule table_vehicle_distribution:
         shape_data = join(config["compiled_data_dir"], "shape_data.csv")
     output:
         tex = join(config["table_dir"], "table_vehicle_distribution.tex")
+    conda:
+        "environment.yml"
     shell:
         "python {input.script} \
             --shape-data {input.shape_data} \
@@ -93,6 +105,8 @@ rule table_regressions:
         )
     output:
         tex = join(config["table_dir"], "table_regressions.tex")
+    conda:
+        "environment.yml"
     shell:
         "python {input.script} \
             --reg-results {input.models} \
@@ -111,6 +125,8 @@ rule download_data:
     params:
         out_dir = config["raw_data_dir"],
         url = config["url"]
+    conda:
+        "environment.yml"
     shell:
         "python {input.script} \
             --url {params.url} \
@@ -128,6 +144,8 @@ rule create_shape_data:
         csv = join(config["compiled_data_dir"], "shape_data.csv")
     params:
         gtfs_dir = config["raw_data_dir"]
+    conda:
+        "environment.yml"
     shell:
         "python {input.script} shape \
             --gtfs-dir {params.gtfs_dir} \
@@ -143,6 +161,8 @@ rule create_plot_data:
         csv = join(config["compiled_data_dir"], "plot_data.csv")
     params:
         gtfs_dir = config["raw_data_dir"]
+    conda:
+        "environment.yml"
     shell:
         "python {input.script} plot \
             --gtfs-dir {params.gtfs_dir} \
@@ -158,6 +178,8 @@ rule create_distance_data:
         csv = join(config["compiled_data_dir"], "distance_data.csv")
     params:
         gtfs_dir = config["raw_data_dir"]
+    conda:
+        "environment.yml"
     shell:
         "python {input.script} distance \
             --gtfs-dir {params.gtfs_dir} \
@@ -171,6 +193,8 @@ rule create_regression_data:
         distance_data = join(config["raw_data_dir"], "distance_data.csv")
     output:
         csv = join(config["compiled_data_dir"], "regression_data.csv")
+    conda:
+        "environment.yml"
     shell:
         "python {input.script} regression \
             --shape-data {input.shape_data} \
